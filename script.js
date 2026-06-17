@@ -355,11 +355,44 @@ const Student = arr.map((item) => {
 // console.log(arr); 
 
 const studentList = document.getElementById("main-content");
-studentList.innerHTML = Student.map((item) => {
-    return `<div class="student-card">
-                <h2>${item.Name}</h2>
-                <p>Marks: ${item.Marks}</p>
-                <p>Class: ${item.Class}</p>
-                <p>Address: ${item.Address}</p>
-            </div>`;
-}).join(' ');
+const searchBox = document.getElementById("search-box");
+const searchBtn = document.getElementById("search-btn");
+
+const renderStudents = (students) => {
+    if (students.length === 0) {
+        studentList.innerHTML = '<p class="no-results">No students found.</p>';
+        return;
+    }
+
+    studentList.innerHTML = students.map((item) => {
+        return `<div class="student-card">
+                    <h2>${item.Name}</h2>
+                    <p>Marks: ${item.Marks}</p>
+                    <p>Class: ${item.Class}</p>
+                    <p>Address: ${item.Address}</p>
+                </div>`;
+    }).join(' ');
+};
+
+const filterStudents = () => {
+    const data = searchBox.value.trim().toLowerCase();
+
+    if (data === "") {
+        renderStudents(Student);
+        return;
+    }
+
+    const filteredStudents = Student.filter((item) => {
+        return item.Name.toLowerCase().includes(data) ||
+               item.Marks.toString().includes(data) ||
+               item.Class.toLowerCase().includes(data) ||
+               item.Address.toLowerCase().includes(data);
+    });
+
+    renderStudents(filteredStudents);
+};
+
+searchBox.addEventListener("input", filterStudents);
+searchBtn.addEventListener("click", filterStudents);
+
+renderStudents(Student);
